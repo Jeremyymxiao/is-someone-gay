@@ -236,6 +236,39 @@
      - `/src/app/api/questions/[id]/vote/route.ts`
      - `/src/app/api/questions/[id]/comments/route.ts`
 
+5. Vercel 部署依赖冲突修复
+   - 问题描述：Vercel 部署时报错，Next.js 与 React 版本不兼容
+     ```
+     npm error peer react@"^18.2.0" from next@14.1.0
+     npm error Found: react@19.0.0
+     ```
+   
+   - 解决方案：
+     1. 将 React 和 React DOM 版本降级到与 Next.js 14.1.0 兼容的版本
+     2. 在 package.json 中更新以下依赖：
+     ```json
+     {
+       "dependencies": {
+         "next": "14.1.0",
+         "react": "^18.2.0",
+         "react-dom": "^18.2.0"
+       },
+       "devDependencies": {
+         "@types/react": "^18.0.15"
+       }
+     }
+     ```
+     3. 删除 node_modules 和 .next 目录
+     4. 重新安装依赖并构建
+   
+   - 注意事项：
+     - Next.js 14.1.0 需要 React 18.2.0 作为对等依赖
+     - 确保 React 和 React DOM 版本匹配
+     - @types/react 的版本也需要相应更新
+   
+   - 相关文件：
+     - `package.json`
+
 ### 下一步计划
 
 1. 修改投票API
