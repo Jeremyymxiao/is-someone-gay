@@ -204,6 +204,38 @@
      - 添加了ObjectId序列化处理
      - 确保正确序列化ObjectId
 
+4. Next.js Route Handler 类型错误修复
+   - 问题描述：在构建时遇到路由处理器的类型错误
+     ```
+     Type error: Route has an invalid "POST" export:
+     Type "{ params: { id: string; }; }" is not a valid type for the function's second argument.
+     ```
+   
+   - 解决方案：
+     1. 将 Next.js 版本从 15.1.4 降级到 14.1.0（更稳定的版本）
+     2. 移除了 `Request` 的显式导入（它是全局类型）
+     3. 使用正确的路由处理器参数类型定义：
+     ```typescript
+     import { NextResponse } from 'next/server';
+     
+     export async function POST(
+       request: Request,
+       { params }: { params: { id: string } }
+     ) {
+       // ... 
+     }
+     ```
+   
+   - 注意事项：
+     - Next.js 14.1.0 中 `Request` 是全局类型，不需要从 'next/server' 导入
+     - 路由处理器的参数类型需要严格匹配 Next.js 的类型定义
+     - 使用解构语法 `{ params }` 而不是自定义接口
+   
+   - 相关文件：
+     - `/src/app/api/articles/[id]/like/route.ts`
+     - `/src/app/api/questions/[id]/vote/route.ts`
+     - `/src/app/api/questions/[id]/comments/route.ts`
+
 ### 下一步计划
 
 1. 修改投票API
@@ -296,6 +328,60 @@ interface Question {
    - 使用 `findOneAndUpdate` 优化数据库操作
    - 改进了投票验证逻辑
    - 添加了详细的错误消息
+
+### Next.js 15 Type Fixing Attempts
+
+1. **Attempt 1: Using Custom Props Type**
+   ```typescript
+   type Props = {
+     params: { id: string }
+     searchParams: Record<string, string | string[] | undefined>
+   }
+   ```
+   Error: Type 'Props' does not satisfy the constraint 'PageProps'
+
+2. **Attempt 2: Using Interface with Promise**
+   ```typescript
+   type PageProps = {
+     params: Promise<{ id: string }>
+   }
+   ```
+   Error: Type '{ params: { id: string; }; }' does not satisfy the constraint 'PageProps'
+
+3. **Attempt 3: Using Route Segment Config**
+   ```typescript
+   type RouteSegmentConfig = {
+     params: {
+       id: string;
+     };
+   };
+   ```
+   Error: Type 'RouteSegmentConfig' is not a valid type for the function's second argument
+
+4. **Attempt 4: Using Inline Types**
+   ```typescript
+   export default async function ArticlePage({
+     params,
+   }: {
+     params: { id: string }
+   }) {
+   ```
+   Error: Type '{ params: { id: string; }; }' does not satisfy the constraint 'PageProps'
+
+5. **Final Working Solution**
+   ```typescript
+   interface PageProps {
+     params: {
+       id: string
+     }
+   }
+   ```
+   This approach worked after removing the Promise-based params and metadata generation.
+
+Key Learnings:
+- Next.js 15 has stricter type requirements for page props
+- The params object should not be wrapped in a Promise
+- Keep the interface simple and match the exact structure Next.js expects
 
 ### Next Steps
 1. 实现评论的点赞功能
