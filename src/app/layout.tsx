@@ -3,6 +3,7 @@ import { Quicksand } from "next/font/google"
 import "./globals.css"
 import { Header } from "@/components/Header"
 import { Footer } from "@/components/Footer"
+import { Analytics } from "@vercel/analytics/react"
 
 const quicksand = Quicksand({ 
   subsets: ["latin"],
@@ -24,6 +25,7 @@ export default function RootLayout({
       <body className={`${quicksand.className} min-h-full flex flex-col bg-gradient-to-br from-violet-200 via-purple-100 to-sky-200`}>
         <Header />
         {children}
+        <Analytics />
         <Footer />
       </body>
     </html>

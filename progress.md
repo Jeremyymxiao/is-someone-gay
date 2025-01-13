@@ -269,6 +269,36 @@
    - 相关文件：
      - `package.json`
 
+6. Vercel 环境变量配置
+   - 问题描述：Vercel 部署时报错，缺少必要的环境变量
+     ```
+     Error: Invalid/Missing environment variable: "MONGODB_URI"
+     ```
+   
+   - 解决方案：
+     1. 在 Vercel 项目设置中添加环境变量：
+        - 打开 Vercel 项目仪表板
+        - 进入 Settings > Environment Variables
+        - 添加以下变量：
+          ```
+          MONGODB_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/issomeonegay
+          ```
+     2. 确保环境变量在所有环境中都可用：
+        - Production
+        - Preview
+        - Development
+   
+   - 注意事项：
+     - 不要在代码中直接硬编码数据库连接字符串
+     - 确保 MongoDB URI 包含正确的数据库名称
+     - 在本地开发时使用 .env.local 文件
+     - 不要将 .env 文件提交到版本控制系统
+   
+   - 相关文件：
+     - `src/lib/mongodb.ts`
+     - `.env.local` (本地开发)
+     - `.gitignore`
+
 ### 下一步计划
 
 1. 修改投票API
