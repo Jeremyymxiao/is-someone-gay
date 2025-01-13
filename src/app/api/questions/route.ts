@@ -46,15 +46,19 @@ export async function GET(request: Request) {
 
     // 序列化问题
     const serializedQuestions = questions.map(q => ({
-      id: q._id.toString(),
+      _id: q._id.toString(),
+      id: q._id.toString(), // 添加 id 字段用于向后兼容
       title: q.title,
       type: q.type,
       description: q.description,
       votes: q.votes,
-      comments: q.comments.map(c => ({
-        ...c,
-        id: c._id.toString(),
-        createdAt: c.createdAt.toISOString()
+      comments: (q.comments || []).map(c => ({
+        _id: c._id.toString(),
+        text: c.text,
+        nickname: c.nickname,
+        createdAt: c.createdAt.toISOString(),
+        likes: c.likes,
+        likedIps: c.likedIps || []
       })),
       createdAt: q.createdAt.toISOString(),
       updatedAt: q.updatedAt.toISOString()
@@ -101,8 +105,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const now = new Date();
-    const newQuestion: QuestionData = {
+    const question: Omit<Question, '_id'> = {
       title: data.title,
       description: data.description || '',
       type: 'user',
@@ -112,29 +115,15 @@ export async function POST(request: Request) {
         votedIps: []
       },
       comments: [],
-      createdAt: now,
-      updatedAt: now
+      createdAt: new Date(),
+      updatedAt: new Date()
     };
 
-    const result = await db
-      .collection<Question>("questions")
-      .insertOne(newQuestion as any);
-
-    if (!result.acknowledged) {
-      return NextResponse.json(
-        { error: 'Failed to create question' },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json({
+    const result = await db.collection<Question>("questions").insertOne(question as Question);
+    
+    return NextResponse.json({ 
       success: true,
-      question: {
-        id: result.insertedId.toString(),
-        ...newQuestion,
-        createdAt: now.toISOString(),
-        updatedAt: now.toISOString()
-      }
+      questionId: result.insertedId.toString()
     });
   } catch (e) {
     console.error('Error in create question API:', e);

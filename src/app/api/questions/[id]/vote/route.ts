@@ -9,12 +9,12 @@ export async function POST(
 ) {
   try {
     const client = await clientPromise;
-    const db = client.db("issomeonegay");
+    const db = client.db("kana-learning-dev");
     
-    const { voteType } = await request.json();
+    const { vote } = await request.json();
     const ipAddress = request.headers.get('x-forwarded-for') || 'unknown';
 
-    if (voteType !== 'yes' && voteType !== 'no') {
+    if (vote !== 'yes' && vote !== 'no') {
       return NextResponse.json(
         { error: 'Invalid vote type' },
         { status: 400 }
@@ -33,7 +33,7 @@ export async function POST(
       );
     }
 
-    const hasVoted = question.votes.votedIps.some(v => v.ip === ipAddress);
+    const hasVoted = question.votes.votedIps?.some(v => v.ip === ipAddress);
     if (hasVoted) {
       return NextResponse.json(
         { error: 'You have already voted' },
@@ -47,47 +47,35 @@ export async function POST(
       .updateOne(
         { _id: new ObjectId(params.id) },
         {
-          $inc: { [`votes.${voteType}`]: 1 },
+          $inc: { [`votes.${vote}`]: 1 },
           $push: {
             'votes.votedIps': {
               ip: ipAddress,
-              vote: voteType
+              vote,
+              votedAt: new Date()
             }
           }
         }
       );
 
-    if (!updateResult.acknowledged) {
+    if (updateResult.modifiedCount === 0) {
       return NextResponse.json(
         { error: 'Failed to update vote' },
         { status: 500 }
       );
     }
 
-    // 获取更新后的投票数据
+    // 获取更新后的问题数据
     const updatedQuestion = await db
       .collection<Question>("questions")
-      .findOne(
-        { _id: new ObjectId(params.id) },
-        { projection: { votes: 1 } }
-      );
-
-    if (!updatedQuestion) {
-      return NextResponse.json(
-        { error: 'Failed to fetch updated vote count' },
-        { status: 500 }
-      );
-    }
+      .findOne({ _id: new ObjectId(params.id) });
 
     return NextResponse.json({
       success: true,
-      votes: {
-        yes: updatedQuestion.votes.yes,
-        no: updatedQuestion.votes.no
-      }
+      votes: updatedQuestion?.votes
     });
-  } catch (e) {
-    console.error('Error in vote API:', e);
+  } catch (error) {
+    console.error('Vote error:', error);
     return NextResponse.json(
       { error: 'Failed to process vote' },
       { status: 500 }
@@ -102,14 +90,13 @@ export async function GET(
 ) {
   try {
     const client = await clientPromise;
-    const db = client.db("issomeonegay");
+    const db = client.db("kana-learning-dev");
     
+    const ipAddress = request.headers.get('x-forwarded-for') || 'unknown';
+
     const question = await db
       .collection<Question>("questions")
-      .findOne(
-        { _id: new ObjectId(params.id) },
-        { projection: { votes: 1, type: 1, title: 1 } }
-      );
+      .findOne({ _id: new ObjectId(params.id) });
 
     if (!question) {
       return NextResponse.json(
@@ -118,19 +105,15 @@ export async function GET(
       );
     }
 
-    const ipAddress = request.headers.get('x-forwarded-for') || 'unknown';
-    const userVote = question.votes.votedIps.find(v => v.ip === ipAddress)?.vote;
+    const userVote = question.votes.votedIps?.find(v => v.ip === ipAddress)?.vote;
 
     return NextResponse.json({
       success: true,
-      votes: {
-        yes: question.votes.yes,
-        no: question.votes.no
-      },
+      votes: question.votes,
       userVote
     });
-  } catch (e) {
-    console.error('Error in get vote API:', e);
+  } catch (error) {
+    console.error('Get vote status error:', error);
     return NextResponse.json(
       { error: 'Failed to get vote status' },
       { status: 500 }

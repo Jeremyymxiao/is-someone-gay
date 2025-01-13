@@ -1,23 +1,19 @@
 "use client"
 
 import { useState } from 'react'
-import { Article } from '@/types/db'
+import { Article, SerializedArticle } from '@/types/db'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { ThumbsUp, Eye } from 'lucide-react'
 import { formatDate } from '@/lib/utils'
-
-type SerializedArticle = Omit<Article, '_id' | 'createdAt' | 'updatedAt'> & {
-  _id: string
-  createdAt: string
-  updatedAt: string
-}
+import ReactMarkdown from 'react-markdown'
+import { Comments } from '@/components/Comments'
 
 interface ArticleDetailProps {
   article: SerializedArticle
 }
 
-export function ArticleDetail({ article }: ArticleDetailProps) {
+export default function ArticleDetail({ article }: ArticleDetailProps) {
   const [likes, setLikes] = useState(article.likes)
   const [isLiked, setIsLiked] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -53,26 +49,25 @@ export function ArticleDetail({ article }: ArticleDetailProps) {
             {article.views} views
           </span>
           <span>•</span>
-          <time dateTime={article.createdAt}>
-            {formatDate(new Date(article.createdAt))}
-          </time>
+          <span>{formatDate(new Date(article.createdAt))}</span>
         </div>
         <div className="prose max-w-none">
-          {article.content || 'No content available'}
+          <ReactMarkdown>{article.content}</ReactMarkdown>
         </div>
       </CardContent>
       <CardFooter className="flex justify-between items-center">
         <Button
-          variant={isLiked ? "default" : "outline"}
+          variant="outline"
           size="sm"
+          className={`flex items-center gap-2 ${isLiked ? 'text-blue-600' : ''}`}
           onClick={handleLike}
           disabled={isLoading}
-          className="flex items-center gap-2"
         >
           <ThumbsUp className="w-4 h-4" />
-          <span>{likes}</span>
+          {likes} Likes
         </Button>
       </CardFooter>
+      <Comments articleId={article._id} initialComments={article.comments} />
     </Card>
   )
 }

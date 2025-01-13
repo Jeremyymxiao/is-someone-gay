@@ -5,75 +5,38 @@ dotenv.config({ path: '.env.local' });
 
 const articles = [
   {
-    title: "can you be gay and christian?",
-    content: `The relationship between being gay and Christian is a topic of ongoing discussion within religious communities. Here's a comprehensive overview:
+    title: "Which Ear Is The Gay Ear?",
+    content: `# The Gay Ear: Myth, History, and Modern Reality
 
-Different Christian Perspectives:
+If you've ever wondered about the "gay ear" myth, you're not alone. This fascinating piece of cultural history dates back to the 1980s and early 1990s when ear piercings were used as subtle signals in the LGBTQ+ community. But what's the real story behind this popular urban legend?
 
-1. Affirming Churches and Organizations:
-- Fully accept LGBTQ+ Christians
-- Perform same-sex marriages
-- View sexual orientation as part of God's creation
-- Focus on love and inclusion
+## The Historical Context
 
-2. Traditional Views:
-- Maintain traditional biblical interpretation
-- Distinguish between orientation and behavior
-- May accept LGBTQ+ people while not affirming relationships
-- Focus on traditional doctrine
+Back in the day, there was this widely spread belief that having your right ear pierced meant you were gay, while a left ear piercing indicated you were straight. People would often say "left is right, right is wrong" or "right is gay, left is straight" as a way to remember this unofficial code. This cultural phenomenon was particularly strong in Western countries during the late 20th century.
 
-3. Middle Ground Approaches:
-- Seek to balance tradition with modern understanding
-- Emphasize pastoral care and support
-- Focus on individual faith journeys
-- Promote dialogue and understanding
+## Understanding the Code
 
-Personal Faith Journey:
+The origin of this coding system actually makes a lot of sense when you consider the historical context. During times when being openly LGBTQ+ wasn't as accepted as it is today, people in the community often relied on subtle signals to identify each other. These signals, known as "coding," included various fashion choices, and ear piercings became one of these subtle indicators.
 
-1. Reconciliation:
-- Many LGBTQ+ Christians successfully integrate faith and identity
-- Find affirming faith communities
-- Develop personal relationship with God
-- Interpret scripture through contemporary lens
+## Regional Variations
 
-2. Support Resources:
-- LGBTQ+ Christian organizations
-- Affirming churches and ministries
-- Online communities and forums
-- Books and educational materials
+However, it's essential to understand that this was never a universal rule. The meaning of ear piercings varied significantly depending on where you lived and what time period you're talking about. In some places, the meanings were completely reversed, while in others, this concept didn't exist at all.
 
-3. Theological Understanding:
-- Modern biblical scholarship
-- Historical context of scripture
-- Cultural interpretation
-- Progressive theology
+## Modern Perspective
 
-Practical Considerations:
+Fast forward to today, and the whole idea of a "gay ear" seems pretty outdated. Modern fashion has completely moved past these old stereotypes. Now, people get their ears pierced wherever they want, with whatever style they prefer, regardless of their sexual orientation. Multiple piercings, industrial bars, cartilage piercings - they're all just expressions of personal style rather than signals of identity.
 
-1. Finding Community:
-- Research affirming churches
-- Connect with LGBTQ+ Christian groups
-- Build support network
-- Share experiences with others
+## Cultural Evolution
 
-2. Personal Growth:
-- Develop strong spiritual foundation
-- Maintain authentic self
-- Balance faith and identity
-- Continue learning and growing
+The evolution of this cultural phenomenon really shows how far society has come in terms of LGBTQ+ acceptance. What was once a necessary code has become an interesting piece of cultural history. These days, you're more likely to choose your piercing based on what looks good with your ear shape or what matches your aesthetic rather than any kind of social signaling.
 
-3. Advocacy and Education:
-- Share personal story
-- Support others in journey
-- Promote understanding
-- Work for change within faith communities
+## Making Your Choice
 
-Key Messages:
-- Many LGBTQ+ people maintain strong Christian faith
-- Numerous affirming churches and organizations exist
-- Personal faith journey is unique to each individual
-- Support and resources are available
-- Both identity and faith can coexist harmoniously`,
+So, if you're thinking about getting your ear pierced, don't worry about old stereotypes. Pick the side that feels right for you. After all, the only real meaning behind an ear piercing today is the one you choose to give it. Whether it's your right ear, left ear, or both, what matters is that you're expressing yourself in a way that makes you feel confident and authentic.
+
+## Conclusion
+
+Remember, fashion choices and personal style are just that - personal. They don't define your sexual orientation or identity. The "gay ear" myth is now just an interesting reminder of how far we've come in creating a more accepting and open society where such coding isn't necessary anymore.`,
     type: 'preset',
     views: Math.floor(Math.random() * 1000),
     likes: Math.floor(Math.random() * 100),
@@ -81,203 +44,27 @@ Key Messages:
     updatedAt: new Date()
   },
   {
-    title: "what does god say about being gay?",
-    content: `Different religious traditions and interpretations offer varying perspectives on what God says about being gay. Here's an overview of different viewpoints:
+    title: "When Was Gay Marriage Legalized?",
+    content: `The legalization of same-sex marriage has occurred at different times across various countries and jurisdictions. Here's a timeline of key events:
 
-Religious Perspectives:
-
-1. Traditional Views:
-- Interpret religious texts as prohibiting same-sex relationships
-- Emphasize traditional marriage and family structures
-- Focus on procreation as a divine purpose
-
-2. Progressive Views:
-- Emphasize God's love and acceptance for all people
-- Focus on broader spiritual principles of love and inclusion
-- View sexual orientation as part of human diversity
-
-3. Modern Religious Movements:
-- Many denominations now fully accept LGBTQ+ people
-- Some perform same-sex marriages
-- Emphasize spiritual over literal interpretations
-
-Key Theological Arguments:
-
-1. Love and Acceptance:
-- God loves all creation
-- Focus on divine acceptance
-- Emphasis on human dignity
-
-2. Personal Relationship with God:
-- Individual spiritual journeys
-- Direct connection with divine
-- Personal interpretation of faith
-
-3. Religious Reform:
-- Evolution of religious understanding
-- Historical context of texts
-- Modern theological scholarship
-
-Practical Considerations:
-
-1. Faith Communities:
-- Varying levels of acceptance
-- Support groups available
-- LGBTQ+-affirming congregations exist
-
-2. Personal Faith:
-- Individual spiritual journey
-- Reconciling identity and beliefs
-- Finding supportive community
-
-3. Religious Counseling:
-- LGBTQ+-affirming religious counselors
-- Support for faith exploration
-- Mental health resources
-
-Important Notes:
-- Views vary widely among and within religions
-- Personal interpretation plays a role
-- Support communities exist
-- Faith and identity can coexist
-- Religious understanding continues to evolve`,
-    type: 'preset',
-    views: Math.floor(Math.random() * 1000),
-    likes: Math.floor(Math.random() * 100),
-    createdAt: new Date(),
-    updatedAt: new Date()
-  },
-  {
-    title: "what does the bible say about being gay?",
-    content: `The interpretation of biblical passages regarding homosexuality is a complex and debated topic among religious scholars and communities. Here's an overview of the key points and various interpretations:
-
-Commonly Cited Passages:
-
-1. Old Testament:
-- Leviticus 18:22 and 20:13
-- Genesis 19 (Story of Sodom and Gomorrah)
-
-2. New Testament:
-- Romans 1:26-27
-- 1 Corinthians 6:9-10
-- 1 Timothy 1:9-10
-
-Different Interpretations:
-
-1. Traditional Interpretation:
-- Views these passages as condemning homosexual behavior
-- Maintains that marriage is between a man and a woman
-- Emphasizes biblical sexual ethics
-
-2. Progressive Interpretation:
-- Considers historical and cultural context
-- Argues that modern understanding of sexual orientation wasn't known in biblical times
-- Focuses on broader themes of love and acceptance
-
-3. Scholarly Perspectives:
-- Examine original languages and contexts
-- Debate precise meanings of key terms
-- Consider cultural norms of biblical times
-
-Modern Religious Responses:
-
-1. Conservative Views:
-- Maintain traditional interpretations
-- Often oppose same-sex relationships
-- Emphasize biblical authority
-
-2. Liberal Views:
-- Focus on inclusive interpretation
-- Emphasize love and acceptance
-- Support LGBTQ+ inclusion in religious communities
-
-3. Middle Ground Approaches:
-- Distinguish between orientation and behavior
-- Seek balance between tradition and modern understanding
-- Emphasize pastoral care and compassion
-
-Important Considerations:
-- Biblical interpretation varies among denominations
-- Cultural context affects understanding
-- Personal faith journeys differ
-- Many LGBTQ+ people reconcile faith and identity
-- Support communities exist for LGBTQ+ people of faith`,
-    type: 'preset',
-    views: Math.floor(Math.random() * 1000),
-    likes: Math.floor(Math.random() * 100),
-    createdAt: new Date(),
-    updatedAt: new Date()
-  },
-  {
-    title: "when was gay marriage legalized in California?",
-    content: `The path to marriage equality in California has been complex and marked by several legal changes. Here's the timeline:
-
-Key Events:
-1. February 12, 2004:
-- San Francisco Mayor Gavin Newsom authorizes same-sex marriages
-- About 4,000 couples marry before the California Supreme Court halts them
-- These marriages were later voided
-
-2. May 15, 2008:
-- California Supreme Court rules ban on same-sex marriage unconstitutional
-- Same-sex marriages begin on June 16, 2008
-- Approximately 18,000 same-sex couples marry during this period
-
-3. November 4, 2008:
-- Proposition 8 passes, amending state constitution to ban same-sex marriage
-- Previously performed marriages remain valid
-- New same-sex marriages are prohibited
-
-4. August 4, 2010:
-- Federal District Court declares Proposition 8 unconstitutional
-- Decision is appealed, keeping Prop 8 in effect during appeals
-
-5. June 26, 2013:
-- U.S. Supreme Court dismisses Prop 8 appeal
-- Same-sex marriages resume in California on June 28, 2013
-- This date marks the permanent legalization of same-sex marriage in California
-
-6. June 26, 2015:
-- U.S. Supreme Court's Obergefell v. Hodges decision
-- Confirms and reinforces the right to same-sex marriage nationwide
-
-Current Status:
-- Same-sex marriage is fully legal in California
-- All marriage rights and benefits apply equally to same-sex couples
-- California recognizes same-sex marriages from other states and countries`,
-    type: 'preset',
-    views: Math.floor(Math.random() * 1000),
-    likes: Math.floor(Math.random() * 100),
-    createdAt: new Date(),
-    updatedAt: new Date()
-  },
-  {
-    title: "when was gay marriage legalized?",
-    content: `The legalization of same-sex marriage has occurred at different times across various countries and jurisdictions. Here's a timeline of some significant milestones:
-
-Key Global Milestones:
-- 2001: Netherlands becomes the first country to legalize same-sex marriage
-- 2003: Belgium legalizes same-sex marriage
-- 2005: Canada and Spain legalize same-sex marriage
-- 2009: Norway and Sweden legalize same-sex marriage
-- 2013: England and Wales legalize same-sex marriage
-- 2015: United States legalizes same-sex marriage nationwide
-- 2017: Australia legalizes same-sex marriage
-- 2022: Slovenia legalizes same-sex marriage
-- 2023: Greece legalizes same-sex marriage
+Global Timeline:
+- 2001: Netherlands (first country)
+- 2003: Belgium
+- 2005: Spain and Canada
+- 2013: France and New Zealand
+- 2015: United States (nationwide)
+- 2017: Australia
+- 2022: Slovenia
 
 United States Timeline:
-- 2004: Massachusetts becomes the first U.S. state to legalize same-sex marriage
-- 2008-2015: Various states individually legalize same-sex marriage
-- June 26, 2015: The Supreme Court case Obergefell v. Hodges makes same-sex marriage legal nationwide
+- 2004: Massachusetts (first state)
+- 2008: California (temporarily)
+- 2015: Nationwide (Obergefell v. Hodges)
 
 Current Status:
-- As of 2024, same-sex marriage is legal in 34 countries
-- Many countries still do not recognize same-sex marriage
-- Some countries offer civil unions or registered partnerships instead
-- The movement for marriage equality continues globally
-
-The fight for marriage equality continues in many parts of the world, with ongoing efforts to secure equal rights for LGBTQ+ couples.`,
+- Legal in 30+ countries worldwide
+- Ongoing advocacy in many nations
+- Continued expansion of rights`,
     type: 'preset',
     views: Math.floor(Math.random() * 1000),
     likes: Math.floor(Math.random() * 100),
@@ -285,20 +72,459 @@ The fight for marriage equality continues in many parts of the world, with ongoi
     updatedAt: new Date()
   },
   {
-    title: "which ear is the gay ear?",
-    content: `The concept of a "gay ear" refers to the idea that having a piercing in a specific ear might indicate someone's sexual orientation. Historically, in some Western cultures during the 1980s and early 1990s, it was believed that having an earring in the right ear was a subtle signal of being gay, while having one in the left ear was considered "straight."
+    title: "When Was Gay Marriage Legalized In California?",
+    content: `The history of same-sex marriage in California has been complex with several legal changes. Here's the timeline:
 
-However, this is largely considered an outdated and unreliable stereotype. The association between ear piercing and sexual orientation varies by culture and time period, and in modern society, ear piercings are generally viewed as a fashion choice rather than an indicator of sexual orientation.
+Key Events:
+- 2004: San Francisco begins issuing licenses
+- 2008: California Supreme Court legalizes (May)
+- 2008: Proposition 8 bans same-sex marriage (November)
+- 2013: Proposition 8 struck down
+- 2015: Nationwide legalization
 
-Key points to understand:
-- The "gay ear" stereotype emerged in the late 20th century
-- Right ear was sometimes called the "gay ear"
-- Left ear was sometimes called the "straight ear"
-- This coding system was never universal or reliable
-- Modern view: Ear piercing is simply a fashion choice
-- The stereotype has largely fallen out of use in contemporary society
+Legal Battles:
+- In re Marriage Cases (2008)
+- Proposition 8 campaign
+- Perry v. Schwarzenegger
+- Supreme Court decisions
 
-It's important to note that attempting to determine someone's sexual orientation based on physical appearance or fashion choices is not reliable and can perpetuate harmful stereotypes.`,
+Current Status:
+- Fully legal since 2013
+- Equal rights and protections
+- Recognition of out-of-state marriages`,
+    type: 'preset',
+    views: Math.floor(Math.random() * 1000),
+    likes: Math.floor(Math.random() * 100),
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    title: "What Does The Bible Say About Being Gay?",
+    content: `The Bible's stance on homosexuality is a topic of ongoing theological debate. Here's an overview of different interpretations:
+
+Traditional Interpretation:
+- Cites specific passages
+- Views as prohibited
+- Emphasizes traditional marriage
+
+Progressive Interpretation:
+- Considers historical context
+- Focuses on love and acceptance
+- Different translation perspectives
+
+Key Passages Discussed:
+- Leviticus 18:22
+- Romans 1:26-27
+- 1 Corinthians 6:9
+- Genesis 19
+
+Modern Understanding:
+- Various denominational views
+- Cultural context important
+- Focus on overall message`,
+    type: 'preset',
+    views: Math.floor(Math.random() * 1000),
+    likes: Math.floor(Math.random() * 100),
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    title: "What Does God Say About Being Gay?",
+    content: `Religious perspectives on what God says about being gay vary widely across different faiths and interpretations:
+
+Different Viewpoints:
+- Traditional religious views
+- Progressive interpretations
+- Modern theological perspectives
+
+Key Themes:
+- Divine love and acceptance
+- Religious texts interpretation
+- Cultural context
+- Modern understanding
+
+Religious Responses:
+- Varying denominational stances
+- Evolving interpretations
+- Focus on compassion
+- Individual faith journeys`,
+    type: 'preset',
+    views: Math.floor(Math.random() * 1000),
+    likes: Math.floor(Math.random() * 100),
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    title: "Can You Be Gay And Christian?",
+    content: `The relationship between being gay and Christian is a topic of ongoing discussion within religious communities:
+
+Different Perspectives:
+- Affirming churches
+- Traditional views
+- Middle ground approaches
+
+Personal Faith:
+- Individual journeys
+- Support resources
+- Community importance
+- Spiritual growth
+
+Modern Context:
+- Changing attitudes
+- Inclusive communities
+- Theological discussion
+- Personal faith expression`,
+    type: 'preset',
+    views: Math.floor(Math.random() * 1000),
+    likes: Math.floor(Math.random() * 100),
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    title: "Is Gay Marriage Legal In Japan?",
+    content: `The status of same-sex marriage in Japan has unique characteristics:
+
+Current Status:
+- Not legally recognized nationwide
+- Some municipalities offer partnerships
+- Ongoing legal challenges
+- Public opinion shifting
+
+Legal Framework:
+- Constitutional interpretation
+- Local partnership certificates
+- Rights and limitations
+- International recognition
+
+Future Prospects:
+- Growing support
+- Legal developments
+- Advocacy efforts
+- Social change`,
+    type: 'preset',
+    views: Math.floor(Math.random() * 1000),
+    likes: Math.floor(Math.random() * 100),
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    title: "What Does It Mean To Be Gay?",
+    content: `Being gay refers to sexual orientation and identity:
+
+Definition:
+- Same-sex attraction
+- Personal identity
+- Emotional connection
+- Relationship preferences
+
+Components:
+- Sexual orientation
+- Romantic attraction
+- Identity expression
+- Personal experience
+
+Modern Understanding:
+- Scientific perspective
+- Social context
+- Individual variation
+- Identity spectrum`,
+    type: 'preset',
+    views: Math.floor(Math.random() * 1000),
+    likes: Math.floor(Math.random() * 100),
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    title: "What Percent Of The Population Is Gay?",
+    content: `Statistical data on LGBTQ+ demographics varies by study and region:
+
+Global Statistics:
+- Varying estimates
+- Research challenges
+- Regional differences
+- Reporting factors
+
+Research Findings:
+- Different studies
+- Methodology impact
+- Self-reporting issues
+- Cultural influences
+
+Modern Trends:
+- Increasing openness
+- Generation differences
+- Cultural changes
+- Data collection methods`,
+    type: 'preset',
+    views: Math.floor(Math.random() * 1000),
+    likes: Math.floor(Math.random() * 100),
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    title: "Do Gays Get Stoned In Palestine?",
+    content: `The treatment of LGBTQ+ individuals in Palestine is a complex issue:
+
+Legal Status:
+- Varying regional laws
+- Social attitudes
+- Safety concerns
+- Human rights issues
+
+Cultural Context:
+- Traditional values
+- Modern perspectives
+- Social challenges
+- Support networks
+
+Current Situation:
+- Legal framework
+- Social acceptance
+- Safety considerations
+- Available resources`,
+    type: 'preset',
+    views: Math.floor(Math.random() * 1000),
+    likes: Math.floor(Math.random() * 100),
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    title: "Does One Piercing Mean You're Gay?",
+    content: `Ear piercing and sexual orientation stereotypes:
+
+Historical Context:
+- Cultural myths
+- Fashion history
+- Changing perceptions
+- Modern views
+
+Reality:
+- No correlation
+- Personal choice
+- Fashion trends
+- Cultural differences
+
+Modern Perspective:
+- Style choices
+- Self-expression
+- Cultural shifts
+- Individual meaning`,
+    type: 'preset',
+    views: Math.floor(Math.random() * 1000),
+    likes: Math.floor(Math.random() * 100),
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    title: "Does Nick Parnets Know He Is Gay?",
+    content: `Discussion about speculation regarding personal orientation:
+
+Privacy Considerations:
+- Personal matter
+- Respect boundaries
+- Avoid assumptions
+- Individual journey
+
+Social Impact:
+- Media speculation
+- Public figures
+- Privacy rights
+- Responsible discussion
+
+General Guidelines:
+- Respect privacy
+- Avoid stereotypes
+- Personal choice
+- Support inclusion`,
+    type: 'preset',
+    views: Math.floor(Math.random() * 1000),
+    likes: Math.floor(Math.random() * 100),
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    title: "Does Gay Sex Have Shit Smell?",
+    content: `Sexual health and hygiene information:
+
+Health Facts:
+- Personal hygiene
+- Safe practices
+- Health considerations
+- Medical information
+
+Education:
+- Health awareness
+- Safe practices
+- Medical facts
+- Professional advice
+
+Resources:
+- Healthcare providers
+- Educational materials
+- Medical research
+- Professional guidance`,
+    type: 'preset',
+    views: Math.floor(Math.random() * 1000),
+    likes: Math.floor(Math.random() * 100),
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    title: "How Do You Tell Your Bestfriend They Are Gay?",
+    content: `Supporting friends in their personal journey:
+
+Important Points:
+- Personal journey
+- Respect boundaries
+- Supportive approach
+- Individual timing
+
+Best Practices:
+- Open communication
+- Emotional support
+- Respect privacy
+- Available resources
+
+Support Guidelines:
+- Listen actively
+- Show acceptance
+- Offer support
+- Respect choices`,
+    type: 'preset',
+    views: Math.floor(Math.random() * 1000),
+    likes: Math.floor(Math.random() * 100),
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    title: "Was Being Gay In The Army A Dishonorable?",
+    content: `Historical and current military policies regarding LGBTQ+ service:
+
+Historical Context:
+- Don't Ask Don't Tell
+- Policy changes
+- Service impact
+- Legal developments
+
+Current Status:
+- Modern policies
+- Equal rights
+- Service opportunities
+- Support systems
+
+Policy Evolution:
+- Historical bans
+- Policy changes
+- Current inclusion
+- Future direction`,
+    type: 'preset',
+    views: Math.floor(Math.random() * 1000),
+    likes: Math.floor(Math.random() * 100),
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    title: "What Are The Variables In Gay Lussac's Law?",
+    content: `Understanding Gay-Lussac's Law in chemistry:
+
+Key Components:
+- Pressure
+- Temperature
+- Volume relationships
+- Gas behavior
+
+Mathematical Expression:
+- Formula explanation
+- Variable definitions
+- Applications
+- Calculations
+
+Practical Applications:
+- Laboratory use
+- Industrial processes
+- Real-world examples
+- Problem solving`,
+    type: 'preset',
+    views: Math.floor(Math.random() * 1000),
+    likes: Math.floor(Math.random() * 100),
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    title: "What Is The Difference Between Queer And Gay?",
+    content: `Understanding LGBTQ+ terminology and identities:
+
+Definitions:
+- Gay specifics
+- Queer umbrella
+- Historical context
+- Modern usage
+
+Identity Aspects:
+- Sexual orientation
+- Gender identity
+- Personal expression
+- Community context
+
+Modern Understanding:
+- Evolving terms
+- Individual meaning
+- Community usage
+- Cultural context`,
+    type: 'preset',
+    views: Math.floor(Math.random() * 1000),
+    likes: Math.floor(Math.random() * 100),
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    title: "Who Made The Word Gay Different Meaning?",
+    content: `The evolution of the word "gay" in language:
+
+Historical Evolution:
+- Original meaning
+- Language changes
+- Cultural shifts
+- Modern usage
+
+Timeline:
+- Etymology
+- Meaning changes
+- Cultural impact
+- Contemporary use
+
+Language Development:
+- Word history
+- Social changes
+- Cultural context
+- Modern definition`,
+    type: 'preset',
+    views: Math.floor(Math.random() * 1000),
+    likes: Math.floor(Math.random() * 100),
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    title: "Why Is Taylor Swift So Popular With The Gays?",
+    content: `Exploring Taylor Swift's connection with LGBTQ+ fans:
+
+Fan Connection:
+- Advocacy work
+- Musical appeal
+- Cultural impact
+- Community support
+
+Cultural Impact:
+- LGBTQ+ support
+- Artistic expression
+- Fan community
+- Social influence
+
+Artist Engagement:
+- Public support
+- Musical themes
+- Fan interaction
+- Cultural significance`,
     type: 'preset',
     views: Math.floor(Math.random() * 1000),
     likes: Math.floor(Math.random() * 100),
@@ -319,7 +545,7 @@ async function main() {
     await client.connect();
     console.log('Connected to MongoDB');
     
-    const dbName = "kana-learning-dev";
+    const dbName = "kana-learning"; 
     const db = client.db(dbName);
     console.log('Using database:', dbName);
     

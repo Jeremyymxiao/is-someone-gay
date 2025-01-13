@@ -11,77 +11,64 @@ interface PageProps {
   params: {
     id: string
   }
-  searchParams: { [key: string]: string | string[] | undefined }
 }
 
 async function getQuestion(id: string) {
   try {
     const client = await clientPromise
-    const dbName = "kana-learning-dev"
-    const db = client.db(dbName)
-    console.log('Using database:', dbName)
+    const db = client.db("kana-learning-dev")
     
     if (!ObjectId.isValid(id)) {
-      console.log('Invalid ObjectId:', id)
       return null
     }
 
-    console.log('Fetching question with id:', id)
     const question = await db
       .collection<Question>("questions")
       .findOne({ _id: new ObjectId(id) })
 
     if (!question) {
-      console.log('Question not found:', id)
       return null
     }
 
-    // Get related questions
-    console.log('Fetching related questions')
+    // 获取相关问题
     const relatedQuestions = await db
       .collection<Question>("questions")
       .find({
         _id: { $ne: new ObjectId(id) },
-        // Add more relevance criteria here
+        type: question.type
       })
       .limit(3)
       .toArray()
 
-    console.log('Found', relatedQuestions.length, 'related questions')
-
-    // Serialize the data
-    const serializedQuestion = {
-      id: question._id.toString(),
-      title: question.title,
-      description: question.description,
-      type: question.type,
-      votes: question.votes,
-      comments: (question.comments || []).map(comment => ({
-        id: comment._id.toString(),
-        text: comment.text,
-        nickname: comment.nickname,
-        createdAt: comment.createdAt.toISOString(),
-        likes: comment.likes,
-        likedIps: comment.likedIps
-      })),
+    return {
+      ...question,
+      _id: question._id.toString(),
+      id: question._id.toString(), // 添加id字段以保持向后兼容
       createdAt: question.createdAt.toISOString(),
       updatedAt: question.updatedAt.toISOString(),
+      comments: (question.comments || []).map(comment => ({
+        ...comment,
+        _id: comment._id.toString(),
+        createdAt: comment.createdAt.toISOString()
+      })),
       relatedQuestions: relatedQuestions.map(q => ({
+        _id: q._id.toString(),
         id: q._id.toString(),
         title: q.title,
-        votes: q.votes
+        votes: {
+          yes: q.votes.yes,
+          no: q.votes.no,
+          votedIps: q.votes.votedIps
+        }
       }))
     }
-
-    console.log('Successfully serialized question data')
-    return serializedQuestion
   } catch (error) {
-    console.error('Error in getQuestion:', error)
-    throw error
+    console.error('Failed to fetch question:', error)
+    return null
   }
 }
 
-export default async function QuestionPage({ params, searchParams }: PageProps) {
+export default async function QuestionPage({ params }: PageProps) {
   const question = await getQuestion(params.id)
 
   if (!question) {
@@ -89,23 +76,16 @@ export default async function QuestionPage({ params, searchParams }: PageProps) 
   }
 
   return (
-    <main className="container mx-auto px-4 py-8">
-      <div className="max-w-3xl mx-auto">
-        <div className="mb-6">
-          <Button
-            variant="ghost"
-            size="sm"
-            asChild
-            className="hover:bg-white/20"
-          >
-            <Link href="/questions">
-              <ChevronLeft className="mr-2 h-4 w-4" />
-              Back to Questions
-            </Link>
+    <div className="container py-8">
+      <div className="mb-6">
+        <Link href="/questions">
+          <Button variant="ghost" size="sm" className="gap-2">
+            <ChevronLeft className="w-4 h-4" />
+            Back to Questions
           </Button>
-        </div>
-        <QuestionDetail question={question} />
+        </Link>
       </div>
-    </main>
+      <QuestionDetail question={question} />
+    </div>
   )
 }

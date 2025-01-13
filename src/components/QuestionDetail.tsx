@@ -8,40 +8,7 @@ import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import Link from 'next/link'
-import type { Question } from '@/types/db'
-
-type SerializedQuestion = {
-  id: string
-  title: string
-  description?: string
-  type: 'preset' | 'user'
-  votes: {
-    yes: number
-    no: number
-    votedIps: {
-      ip: string
-      vote: 'yes' | 'no'
-    }[]
-  }
-  comments: Array<{
-    id: string
-    text: string
-    nickname: string
-    createdAt: string
-    likes: number
-    likedIps: string[]
-  }>
-  relatedQuestions?: Array<{
-    id: string
-    title: string
-    votes: {
-      yes: number
-      no: number
-    }
-  }>
-  createdAt: string
-  updatedAt: string
-}
+import type { SerializedQuestion } from '@/types/db'
 
 interface QuestionDetailProps {
   question: SerializedQuestion
@@ -49,193 +16,250 @@ interface QuestionDetailProps {
 
 export default function QuestionDetail({ question: initialQuestion }: QuestionDetailProps) {
   const [question, setQuestion] = useState<SerializedQuestion>(initialQuestion)
-  const [newComment, setNewComment] = useState('')
-  const [nickname, setNickname] = useState('')
+  const [comment, setComment] = useState({
+    text: '',
+    nickname: ''
+  })
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isVoting, setIsVoting] = useState(false)
 
   const totalVotes = question.votes.yes + question.votes.no
   const yesPercentage = totalVotes > 0 ? Math.round((question.votes.yes / totalVotes) * 100) : 0
-  const noPercentage = 100 - yesPercentage
+  const noPercentage = totalVotes > 0 ? Math.round((question.votes.no / totalVotes) * 100) : 0
 
-  const handleVote = async (voteType: 'yes' | 'no') => {
+  const handleVote = async (vote: 'yes' | 'no') => {
+    if (isVoting) return
+    setIsVoting(true)
+
     try {
-      const response = await fetch(`/api/questions/${question.id}/vote`, {
+      const response = await fetch(`/api/questions/${question._id}/vote`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ voteType }),
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ vote })
       })
 
       if (!response.ok) throw new Error('Failed to vote')
-      // TODO: Update vote counts
+
+      const data = await response.json()
+      if (!data.success) {
+        throw new Error(data.error || 'Failed to vote')
+      }
+
+      setQuestion(prev => ({
+        ...prev,
+        votes: {
+          ...prev.votes,
+          [vote]: prev.votes[vote] + 1
+        }
+      }))
     } catch (error) {
-      console.error('Failed to vote:', error)
+      console.error('Error:', error)
+      alert('Failed to vote. Please try again later.')
+    } finally {
+      setIsVoting(false)
     }
   }
 
-  const handleSubmitComment = async () => {
-    if (!nickname.trim() || !newComment.trim() || isSubmitting) return
+  const handleSubmitComment = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!comment.text || !comment.nickname) {
+      alert('Please fill in all fields')
+      return
+    }
 
     setIsSubmitting(true)
+
     try {
-      const response = await fetch(`/api/questions/${question.id}/comments`, {
+      const response = await fetch(`/api/questions/${question._id}/comments`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nickname, content: newComment }),
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(comment)
       })
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to post comment');
+      if (!response.ok) throw new Error('Failed to submit comment')
+
+      const data = await response.json()
+      if (!data.success) {
+        throw new Error(data.error || 'Failed to submit comment')
       }
 
-      const newCommentData = await response.json();
-      
-      // Update comments list with the new comment
       setQuestion(prev => ({
         ...prev,
-        comments: [...prev.comments, newCommentData]
-      }));
+        comments: [...prev.comments, data.comment]
+      }))
 
-      // Reset form
-      setNewComment('')
-      setNickname('')
+      setComment({
+        text: '',
+        nickname: ''
+      })
     } catch (error) {
-      console.error('Failed to post comment:', error)
+      console.error('Error:', error)
+      alert('Failed to submit comment. Please try again later.')
     } finally {
       setIsSubmitting(false)
     }
   }
 
   return (
-    <div className="space-y-6">
-      <Card className="p-6">
-        <div className="flex justify-between items-start">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent">
-            {question.title}
-          </h1>
-          <div className="flex space-x-4">
-            <Button variant="ghost" size="icon">
-              <Share2 className="h-5 w-5" />
+    <div className="max-w-3xl mx-auto">
+      <h1 className="text-3xl font-bold mb-6">{question.title}</h1>
+      
+      {question.description && (
+        <p className="text-gray-600 mb-8">{question.description}</p>
+      )}
+
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <span className="text-lg font-semibold">{totalVotes}</span>
+            <span className="text-gray-500">total votes</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => handleVote('yes')}
+              disabled={isVoting}
+              className="gap-1 text-green-600 hover:text-green-700 hover:bg-green-50"
+            >
+              <ThumbsUp className="w-4 h-4" />
+              Vote Yes
             </Button>
-            <Button variant="ghost" size="icon">
-              <Flag className="h-5 w-5" />
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => handleVote('no')}
+              disabled={isVoting}
+              className="gap-1 text-red-600 hover:text-red-700 hover:bg-red-50"
+            >
+              <ThumbsDown className="w-4 h-4" />
+              Vote No
             </Button>
           </div>
         </div>
 
-        {question.description && (
-          <p className="mt-4 text-gray-600">{question.description}</p>
-        )}
-
-        <div className="mt-8">
-          <div className="flex justify-between mb-2">
-            <span className="font-medium">Total votes: {totalVotes}</span>
-            <span className="text-gray-500">Created: {formatDate(new Date(question.createdAt))}</span>
-          </div>
-          
-          <div className="h-8 bg-gray-200 rounded-lg overflow-hidden flex">
-            <div 
-              className="h-full bg-green-500 flex items-center justify-center text-white transition-all"
+        <div className="bg-gray-100 rounded-lg p-6">
+          <div className="relative h-8 bg-gray-200 rounded-full overflow-hidden flex">
+            <div
+              className="h-full bg-green-500 transition-all duration-300 flex items-center justify-end pr-2"
               style={{ width: `${yesPercentage}%` }}
             >
-              {yesPercentage > 10 && `${yesPercentage}% Yes`}
+              <div className="flex items-center gap-1 text-white font-medium">
+                <ThumbsUp className="w-4 h-4" />
+                <span>{yesPercentage}%</span>
+              </div>
             </div>
-            <div 
-              className="h-full bg-red-500 flex items-center justify-center text-white transition-all"
+            <div
+              className="h-full bg-red-500 transition-all duration-300 flex items-center justify-start pl-2"
               style={{ width: `${noPercentage}%` }}
             >
-              {noPercentage > 10 && `${noPercentage}% No`}
+              <div className="flex items-center gap-1 text-white font-medium">
+                <ThumbsDown className="w-4 h-4" />
+                <span>{noPercentage}%</span>
+              </div>
             </div>
           </div>
-
-          <div className="flex space-x-4 mt-4">
-            <Button
-              variant="outline"
-              className="flex-1 bg-green-100 hover:bg-green-200 text-green-700 border-green-200"
-              onClick={() => handleVote('yes')}
-            >
-              <ThumbsUp className="mr-2 h-5 w-5" />
-              Yes ({question.votes.yes})
-            </Button>
-            <Button
-              variant="outline"
-              className="flex-1 bg-red-100 hover:bg-red-200 text-red-700 border-red-200"
-              onClick={() => handleVote('no')}
-            >
-              <ThumbsDown className="mr-2 h-5 w-5" />
-              No ({question.votes.no})
-            </Button>
+          <div className="flex justify-between mt-2 text-sm text-gray-500">
+            <div>{question.votes.yes} votes</div>
+            <div>{question.votes.no} votes</div>
           </div>
         </div>
-      </Card>
+      </div>
 
-      <Card className="p-6">
-        <h2 className="text-xl font-semibold mb-4">Discussion</h2>
-        
-        <div className="space-y-4 mb-6">
-          <Input
-            placeholder="Your nickname"
-            value={nickname}
-            onChange={(e) => setNickname(e.target.value)}
-          />
-          <Textarea
-            placeholder="Add to the discussion..."
-            rows={3}
-            value={newComment}
-            onChange={(e) => setNewComment(e.target.value)}
-          />
+      <div className="mb-8">
+        <h2 className="text-xl font-semibold mb-4">
+          Comments ({question.comments.length})
+        </h2>
+        <form onSubmit={handleSubmitComment} className="mb-6 space-y-4">
+          <div>
+            <label htmlFor="nickname" className="block text-sm font-medium mb-1">
+              Nickname
+            </label>
+            <Input
+              id="nickname"
+              value={comment.nickname}
+              onChange={e => setComment(prev => ({
+                ...prev,
+                nickname: e.target.value
+              }))}
+              placeholder="Enter your nickname"
+              maxLength={50}
+            />
+          </div>
+          <div>
+            <label htmlFor="comment" className="block text-sm font-medium mb-1">
+              Comment
+            </label>
+            <Textarea
+              id="comment"
+              value={comment.text}
+              onChange={e => setComment(prev => ({
+                ...prev,
+                text: e.target.value
+              }))}
+              placeholder="Write your comment..."
+              maxLength={500}
+            />
+          </div>
           <Button
-            onClick={handleSubmitComment}
+            type="submit"
             disabled={isSubmitting}
+            className="w-full"
           >
-            Post Comment
+            {isSubmitting ? 'Submitting...' : 'Submit Comment'}
           </Button>
-        </div>
+        </form>
 
         <div className="space-y-4">
-          {question.comments?.map((comment) => (
-            <div key={comment.id.toString()} className="border-b pb-4">
-              <div className="flex justify-between items-center mb-2">
+          {question.comments.map(comment => (
+            <Card key={comment._id} className="p-4">
+              <div className="flex items-center justify-between mb-2">
                 <span className="font-medium">{comment.nickname}</span>
-                <span className="text-gray-500 text-sm">
+                <time className="text-sm text-gray-500">
                   {formatDate(new Date(comment.createdAt))}
-                </span>
+                </time>
               </div>
-              <p className="text-gray-700">{comment.text}</p>
-              <div className="mt-2 flex items-center space-x-4">
-                <Button variant="ghost" size="sm" className="text-gray-500 hover:text-blue-600">
-                  <ThumbsUp className="mr-1 h-4 w-4" />
+              <p className="text-gray-600">{comment.text}</p>
+              <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
+                <span className="flex items-center gap-1">
+                  <ThumbsUp className="w-4 h-4" />
                   {comment.likes}
-                </Button>
+                </span>
+                <button className="hover:text-blue-600">
+                  <Share2 className="w-4 h-4" />
+                </button>
+                <button className="hover:text-red-600">
+                  <Flag className="w-4 h-4" />
+                </button>
               </div>
-            </div>
+            </Card>
           ))}
         </div>
-      </Card>
+      </div>
 
-      {(question.relatedQuestions?.length ?? 0) > 0 && (
-        <Card className="p-6">
+      {question.relatedQuestions && question.relatedQuestions.length > 0 && (
+        <div className="mb-8">
           <h2 className="text-xl font-semibold mb-4">Related Questions</h2>
           <div className="space-y-4">
-            {question.relatedQuestions?.map((related) => (
-              <div
-                key={related.id.toString()}
-                className="flex justify-between items-center hover:bg-gray-50 p-2 rounded-lg"
-              >
-                <Link 
-                  href={`/questions/${related.id}`}
-                  className="text-blue-600 hover:underline"
+            {question.relatedQuestions.map(related => (
+              <Card key={related._id} className="p-4">
+                <Link
+                  href={`/questions/${related._id}`}
+                  className="block hover:text-blue-600"
                 >
-                  {related.title}
+                  <h3 className="font-medium">{related.title}</h3>
+                  <div className="text-sm text-gray-500 mt-2">
+                    {related.votes.yes + related.votes.no} votes
+                  </div>
                 </Link>
-                <div className="text-sm text-gray-500">
-                  <span className="mr-4">Yes: {related.votes.yes}</span>
-                  <span>No: {related.votes.no}</span>
-                </div>
-              </div>
+              </Card>
             ))}
           </div>
-        </Card>
+        </div>
       )}
     </div>
   )

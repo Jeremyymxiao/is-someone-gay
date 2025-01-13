@@ -6,64 +6,61 @@ import type { Filter, Sort } from 'mongodb';
 export async function GET(request: Request) {
   try {
     const client = await clientPromise;
-    const dbName = "kana-learning-dev";
-    const db = client.db(dbName);
-    console.log('Using database:', dbName);
-    
-    const { searchParams } = new URL(request.url);
-    const type = searchParams.get('type');
-    const sort = searchParams.get('sort') || 'latest'; // 'latest', 'popular', 'trending'
-    
-    // 构建查询条件
-    const query: Filter<Article> = 
-      (type === 'preset') ? { type: 'preset' } : {};
-    console.log('MongoDB query:', JSON.stringify(query));
-    
-    // 构建排序条件
-    const sortOptions: Record<string, Sort> = {
-      latest: { createdAt: -1 },
-      popular: { views: -1 },
-      trending: { likes: -1 }
-    };
+    const db = client.db("kana-learning-dev");
     
     const articles = await db
       .collection<Article>("articles")
-      .find(query)
-      .sort(sortOptions[sort] || sortOptions.latest)
-      .limit(20)
+      .find()
+      .sort({ createdAt: -1 })
       .toArray();
 
-    console.log('Found articles:', articles.length);
-    if (articles.length > 0) {
-      console.log('First article:', {
-        title: articles[0].title,
-        type: articles[0].type
-      });
-    }
+    const serializedArticles = articles.map(article => ({
+      _id: article._id.toString(),
+      title: article.title,
+      content: article.content,
+      type: article.type,
+      views: article.views,
+      likes: article.likes,
+      likedIps: article.likedIps || [],
+      comments: article.comments?.map(comment => ({
+        _id: comment._id.toString(),
+        text: comment.text,
+        nickname: comment.nickname,
+        createdAt: comment.createdAt.toISOString(),
+        likes: comment.likes,
+        likedIps: comment.likedIps || []
+      })) || [],
+      createdAt: article.createdAt.toISOString(),
+      updatedAt: article.updatedAt.toISOString()
+    }));
 
-    return NextResponse.json(articles);
+    return NextResponse.json({
+      success: true,
+      articles: serializedArticles
+    });
   } catch (e) {
-    console.error('Error in get articles API:', e);
+    console.error('Error:', e);
     return NextResponse.json(
-      { 
-        success: false,
-        error: e instanceof Error ? e.message : 'Unknown error',
-        errorDetails: e instanceof Error ? e.stack : undefined
-      },
+      { error: 'Failed to fetch articles' },
       { status: 500 }
     );
   }
 }
 
-// POST endpoint for creating new articles
 export async function POST(request: Request) {
   try {
     const client = await clientPromise;
-    const dbName = "kana-learning-dev";
-    const db = client.db(dbName);
-    console.log('Using database:', dbName);
+    const db = client.db("kana-learning-dev");
     
     const data = await request.json();
+    
+    if (!data.title) {
+      return NextResponse.json(
+        { error: 'Title is required' },
+        { status: 400 }
+      );
+    }
+
     const article: Omit<Article, '_id'> = {
       title: data.title,
       content: data.content,
@@ -77,18 +74,15 @@ export async function POST(request: Request) {
     };
 
     const result = await db.collection<Article>("articles").insertOne(article as Article);
+    
     return NextResponse.json({ 
       success: true,
-      articleId: result.insertedId 
+      articleId: result.insertedId.toString()
     });
   } catch (e) {
-    console.error('Error in create article API:', e);
+    console.error('Error:', e);
     return NextResponse.json(
-      { 
-        success: false,
-        error: e instanceof Error ? e.message : 'Unknown error',
-        errorDetails: e instanceof Error ? e.stack : undefined
-      },
+      { error: 'Failed to create article' },
       { status: 500 }
     );
   }

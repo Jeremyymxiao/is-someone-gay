@@ -25,3 +25,12 @@ export function sanitizeTitle(title: string): string {
     .replace(/[^a-z0-9]/g, '')
     .replace(/\s+/g, '');
 }
+
+export function generateSlug(title: string): string {
+  return title
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, '')    // 移除特殊字符
+    .replace(/\s+/g, '-')        // 将空格替换为连字符
+    .replace(/-+/g, '-')         // 移除多余的连字符
+}
