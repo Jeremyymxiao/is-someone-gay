@@ -8,7 +8,7 @@ import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import Link from 'next/link'
-import type { SerializedQuestion } from '@/types/db'
+import type { SerializedQuestion, CommentSubmission } from '@/types/db'
 
 interface QuestionDetailProps {
   question: SerializedQuestion
@@ -16,7 +16,7 @@ interface QuestionDetailProps {
 
 export default function QuestionDetail({ question: initialQuestion }: QuestionDetailProps) {
   const [question, setQuestion] = useState<SerializedQuestion>(initialQuestion)
-  const [comment, setComment] = useState({
+  const [comment, setComment] = useState<CommentSubmission>({
     text: '',
     nickname: ''
   })
@@ -77,7 +77,10 @@ export default function QuestionDetail({ question: initialQuestion }: QuestionDe
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(comment)
+        body: JSON.stringify({
+          content: comment.text,
+          nickname: comment.nickname
+        })
       })
 
       if (!response.ok) throw new Error('Failed to submit comment')

@@ -111,3 +111,9 @@ export type SerializedQuestion = {
     }
   }[]
 }
+
+// 评论提交类型
+export type CommentSubmission = {
+  text: string
+  nickname: string
+}

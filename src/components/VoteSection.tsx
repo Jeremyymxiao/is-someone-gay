@@ -34,7 +34,7 @@ export default function VoteSection({
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ voteType }),
+        body: JSON.stringify({ vote: voteType }),
       })
 
       if (response.ok) {

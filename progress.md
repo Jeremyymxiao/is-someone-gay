@@ -461,256 +461,48 @@ Key Learnings:
 
 ## 2025-01-13
 
-### Bug修复
+### 修复投票和评论功能
 
-1. 修复了文章详情页面不显示的问题
-   - 问题：在Next.js的Server Component中使用`fetch`导致数据获取失败
-   - 解决方案：
-     - 移除了`getArticle`函数中使用`fetch`的方式
-     - 改为直接使用MongoDB客户端获取和更新文章数据
-     - 在服务器端完成数据序列化
-   - 影响文件：
-     - `src/app/articles/[id]/page.tsx`
+#### 1. 投票功能修复
+1. **统一数据库名称**
+   - 将所有API路由中的数据库名称统一为 `kana-learning-dev`
+   - 修改了 `questions/[id]/comments/route.ts` 中的数据库名称
 
-2. 修复了文章列表显示不正确的问题
-   - 问题：文章列表API返回的数据格式不正确
-   - 解决方案：
-     - 更新了文章列表API的序列化逻辑
-     - 确保返回正确的数据格式
-   - 影响文件：
-     - `src/app/api/articles/route.ts`
+2. **统一API参数**
+   - 在 `VoteSection.tsx` 中修改了投票参数名称，统一使用 `vote` 而不是 `voteType`
+   - 确保前端和后端的参数名称一致
 
-3. 修复了评论功能不正常的问题
-   - 问题：评论功能无法正常工作
-   - 解决方案：
-     - 更新了评论API的实现
-     - 添加了正确的类型检查和空值处理
-   - 影响文件：
-     - `src/app/api/questions/[id]/comments/route.ts`
+3. **改进前端状态管理**
+   - 在 `QuestionList.tsx` 中使用服务器返回的完整投票数据更新状态
+   - 移除了使用临时IP地址的代码
+   - 添加了用户投票状态的跟踪
 
-## 2025-01-13
+4. **改进重复投票检查**
+   - 添加了获取用户投票状态的API调用
+   - 在组件加载时获取每个问题的投票状态
+   - 禁用已投票问题的投票按钮
+   - 添加了视觉反馈以显示用户的投票选择
 
-### 数据库同步问题调试记录 (2025-01-11)
+#### 2. 评论功能修复
+1. **统一字段命名**
+   - 在前端和后端之间统一使用 `text` 作为评论内容字段
+   - 更新了 `CommentSubmission` 类型定义
+   - 更新了 `SerializedComment` 类型定义
 
-### 问题描述
-在更新数据库内容时，发现虽然初始化脚本执行成功，但前端页面显示的内容没有更新。具体表现为：
-1. 问题列表成功更新
-2. 文章列表仍显示旧内容
+2. **修复API响应格式**
+   - 添加了 `success` 字段到评论API响应中
+   - 规范化了评论对象的格式
+   - 确保返回的评论数据格式与前端期望的格式匹配
 
-### 问题原因
-经过调查发现是由于数据库名称不一致导致的：
-1. 初始化脚本使用了新的数据库名称 `kana-learning-dev`
-2. 而 API 路由仍在使用旧的数据库名称 `issomeonegay`
-3. 这导致前端通过 API 获取数据时，实际查询的是旧数据库
+3. **类型系统改进**
+   - 在 `types/db.ts` 中添加了 `CommentSubmission` 类型
+   - 确保前后端类型定义一致
+   - 修复了类型错误和不匹配问题
 
-### 解决步骤
-1. 检查并统一所有数据库相关文件中的数据库名称：
-   - 初始化脚本 (`scripts/init-db.mjs`, `scripts/init-articles.mjs`)
-   - API 路由 (`src/app/api/questions/route.ts`, `src/app/api/articles/route.ts`)
-   - MongoDB 连接配置 (`src/lib/mongodb.ts`)
-
-2. 在 API 路由中添加调试日志，以便追踪数据库操作：
-   ```typescript
-   console.log('Using database:', dbName);
-   console.log('MongoDB query:', JSON.stringify(query));
-   console.log('Found articles:', articles.length);
-   ```
-
-3. 改进错误处理，使错误信息更详细：
-   ```typescript
-   console.error('Error in get articles API:', e);
-   return NextResponse.json({ 
-     success: false,
-     error: e instanceof Error ? e.message : 'Unknown error',
-     errorDetails: e instanceof Error ? e.stack : undefined
-   });
-   ```
-
-### 预防措施
-1. 将数据库名称统一配置在环境变量中
-2. 在修改数据库名称时，需要检查所有相关文件
-3. 添加适当的日志记录，以便及时发现问题
-4. 在进行数据库操作时，确保先验证插入的数据
-
-### 相关文件
-- `/scripts/init-db.mjs`
-- `/scripts/init-articles.mjs`
-- `/src/app/api/questions/route.ts`
-- `/src/app/api/articles/route.ts`
-- `/src/lib/mongodb.ts`
-- `/.env.local`
-
-### 注意事项
-1. 修改数据库配置后需要重启开发服务器
-2. 确保 MongoDB URI 中包含正确的数据库名称
-3. 检查数据库连接和查询是否成功
-4. 验证数据是否正确插入到目标集合中
-
-## 2025-01-13
-
-### 文章系统改进
-
-1. 文章内容格式化
-   - 安装了 `react-markdown` 用于渲染 Markdown 内容
-   - 安装了 `@tailwindcss/typography` 插件美化 Markdown 样式
-   - 更新了 `ArticleDetail` 组件以支持 Markdown 渲染
-   - 配置了 Tailwind Typography 插件
-
-2. 文章内容管理重构
-   - 创建了专门的 `src/content/articles` 目录存放文章文件
-   - 将每篇文章拆分为独立的文件：
-     - `.md` 文件存储文章内容
-     - `.meta.json` 文件存储元数据
-   - 创建了 `create-article-files.mjs` 脚本用于批量创建文章文件
-   - 更新了 `init-articles.mjs` 脚本以从文件系统读取文章
-
-3. 遇到的问题及解决方案
-   - 问题：数据库名称不一致导致文章无法显示
-     - 原因：API 路由和文章详情页使用了不同的数据库名
-     - 解决：统一使用 "kana-learning" 作为数据库名
-   - 问题：文章内容没有正确分段
-     - 原因：缺少 Markdown 渲染支持
-     - 解决：添加了 react-markdown 和 Tailwind Typography
-   - 问题：文章管理不便
-     - 原因：所有文章内容都在一个 JavaScript 文件中
-     - 解决：将文章拆分为独立的 .md 和 .meta.json 文件
-
-4. 改进点
-   - 文章内容和元数据分离，更易于管理
-   - 支持 Markdown 格式，提升内容可读性
-   - 更好的版本控制支持
-   - 更容易进行多人协作
-   - 提升了代码的可维护性
-
-5. 后续优化方向
-   - 实现文章内容的按需加载
-   - 添加文章缓存机制
-   - 实现文章预览功能
-   - 添加文章编辑界面
-   - 完善文章的搜索和过滤功能
-
-## 2025-01-13
-
-### 添加文章评论功能
-
-1. 实现评论功能的主要步骤：
-   - 创建评论API路由 (`/api/articles/[id]/comments/route.ts`)
-   - 创建评论组件 (`/components/Comments.tsx`)
-   - 修改文章详情组件以集成评论功能
-   - 更新数据库类型定义
-
-2. 遇到的问题和解决方案：
-
-   a. 类型不匹配问题一：评论ID类型不匹配
-   ```typescript
-   // 错误信息
-   Type '{ _id: ObjectId; text: string; nickname: string; createdAt: Date; likes: number; }[]' 
-   is not assignable to type 'Comment[]'
-   ```
-   解决方案：
-   - 创建了专门的 `SerializedComment` 类型
-   - 在传递评论数据时将 ObjectId 转换为字符串
-
-   b. 类型不匹配问题二：日期类型不匹配
-   ```typescript
-   // 错误信息
-   Type 'string' is not assignable to type 'Date & string'
-   ```
-   解决方案：
-   - 更新了 `SerializedArticle` 类型定义
-   - 确保所有日期字段在序列化后都是字符串类型
-   - 在数据传递过程中正确处理日期转换
-
-   c. MongoDB 更新操作类型问题
-   ```typescript
-   // 错误信息
-   Type '{ comments: { $each: [...] }; }' is not assignable to type 'PushOperator<Document>'
-   ```
-   解决方案：
-   - 导入并使用 MongoDB 的 `UpdateFilter` 类型
-   - 正确指定数据库操作的类型参数
-   - 简化了 `$push` 操作的实现
-
-3. 最终实现的功能：
-   - 用户可以在文章详情页查看所有评论
-   - 用户可以使用昵称发表新评论
-   - 评论实时显示在列表顶部
-   - 评论显示发布时间和作者信息
-   - 评论数据在前端和后端之间正确序列化
-
-4. 技术要点：
-   - 使用 TypeScript 确保类型安全
-   - MongoDB 数据库操作的正确实现
-   - 前端组件的状态管理
-   - 日期和ID的序列化处理
-   - API路由的错误处理
-
-5. 代码质量改进：
-   - 添加了清晰的类型定义
-   - 实现了统一的错误处理
-   - 保持了代码的模块化
-   - 确保了数据流的一致性
-   - 添加了必要的数据验证
-
-6. 下一步计划：
-   - 添加评论编辑功能
-   - 实现评论点赞功能
-   - 添加评论分页
-   - 实现评论排序
-   - 添加评论举报功能
-
-## 2025-01-13
-
-### 重构：移除 Slug 依赖
-
-1. **类型定义更新**
-   - 从 `Question` 和 `Article` 接口中移除了 `slug` 字段
-   - 更新了 `SerializedArticle` 和 `SerializedQuestion` 类型定义
-   - 统一使用 MongoDB 的 `_id` 作为标识符
-
-2. **路由重构**
-   - 将 `/articles/[slug]` 重命名为 `/articles/[id]`
-   - 将 `/questions/[slug]` 重命名为 `/questions/[id]`
-   - 更新了路由处理函数，使用 ID 而不是 slug 来查询数据
-
-3. **API 更新**
-   - 修改了文章和问题的 API 路由，移除了 slug 相关代码
-   - 统一了 API 响应中的字段名称，使用 `_id` 而不是 `id`
-   - 移除了 slug 生成逻辑
-
-4. **组件更新**
-   - 更新了 `ArticleList` 和 `QuestionList` 组件，使用 ID 生成链接
-   - 修改了 `ArticleDetail` 和 `QuestionDetail` 组件，适应新的数据结构
-   - 优化了列表布局，从矩阵式改为列表式
-
-5. **初始化脚本**
-   - 删除了 `add-slugs.mjs` 脚本
-   - 更新了 `init-db.mjs` 脚本，移除了 slug 相关代码
-
-### 遇到的问题和解决方案
-
-1. **TypeScript 错误**
-   - 问题：`Property 'id' does not exist on type 'SerializedQuestion'`
-   - 原因：组件中仍在使用 `id` 而不是 `_id`
-   - 解决方案：
-     - 统一使用 `_id` 作为标识符，与 MongoDB 的默认字段名保持一致
-
-2. **路由问题**
-   - 问题：重命名路由文件夹后，详情页面无法访问
-   - 解决方案：
-     - 确保所有路由文件夹名称从 `[slug]` 改为 `[id]`，并更新相关组件中的链接
-
-3. **数据序列化**
-   - 问题：API 响应中的字段名称不一致
-   - 解决方案：
-     - 统一使用 `_id` 作为标识符，确保前端组件和 API 响应使用相同的字段名
-
-### 下一步计划
-
-1. 考虑添加错误边界处理
-2. 优化加载状态的用户体验
-3. 考虑添加缓存机制
-4. 添加更多的用户反馈机制
+4. **错误处理改进**
+   - 统一了错误处理逻辑
+   - 添加了更明确的错误消息
+   - 改进了前端错误提示
 
 ### 技术要点
 - 使用 TypeScript 确保类型安全
@@ -718,13 +510,6 @@ Key Learnings:
 - 前端组件的状态管理
 - 日期和ID的序列化处理
 - API路由的错误处理
-
-### 代码质量改进
-- 添加了清晰的类型定义
-- 实现了统一的错误处理
-- 保持了代码的模块化
-- 确保了数据流的一致性
-- 添加了必要的数据验证
 
 ### 下一步计划
 1. 实现评论的点赞功能

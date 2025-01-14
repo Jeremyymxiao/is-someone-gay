@@ -21,14 +21,14 @@ export async function POST(
     }
 
     const client = await clientPromise;
-    const db = client.db("issomeonegay");
+    const db = client.db("kana-learning-dev");
     
     const data = await request.json();
     const commentId = new ObjectId();
     const comment: Comment = {
       _id: commentId,
       nickname: data.nickname,
-      content: data.content,
+      content: data.text,
       createdAt: new Date(),
       likes: 0,
       ipAddress: request.headers.get('x-forwarded-for') || 'unknown',
@@ -48,12 +48,15 @@ export async function POST(
     }
 
     return NextResponse.json({
-      id: commentId.toString(),
-      nickname: comment.nickname,
-      text: comment.content,
-      createdAt: comment.createdAt.toISOString(),
-      likes: comment.likes,
-      likedIps: comment.likedIps
+      success: true,
+      comment: {
+        _id: commentId.toString(),
+        nickname: comment.nickname,
+        text: comment.content,
+        createdAt: comment.createdAt.toISOString(),
+        likes: comment.likes,
+        likedIps: comment.likedIps
+      }
     });
   } catch (e) {
     console.error(e);
@@ -78,7 +81,7 @@ export async function PUT(
     }
 
     const client = await clientPromise;
-    const db = client.db("issomeonegay");
+    const db = client.db("kana-learning-dev");
     
     const data = await request.json();
     const { commentId } = data;
