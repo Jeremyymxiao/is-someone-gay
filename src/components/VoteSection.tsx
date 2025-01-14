@@ -1,11 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { ThumbsUp, ThumbsDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 interface VoteSectionProps {
-  questionId: string
+  slug: string
   votes: {
     yes: number
     no: number
@@ -15,21 +15,42 @@ interface VoteSectionProps {
 }
 
 export default function VoteSection({
-  questionId,
+  slug,
   votes,
   yesPercentage,
   noPercentage
 }: VoteSectionProps) {
   const [isVoting, setIsVoting] = useState(false)
   const [hasVoted, setHasVoted] = useState(false)
+  const [userVote, setUserVote] = useState<'yes' | 'no' | null>(null)
   const [localVotes, setLocalVotes] = useState(votes)
+
+  useEffect(() => {
+    async function fetchVoteStatus() {
+      try {
+        const response = await fetch(`/api/questions/${slug}/vote`)
+        if (response.ok) {
+          const data = await response.json()
+          if (data.success) {
+            setUserVote(data.userVote)
+            setHasVoted(data.userVote !== null)
+            setLocalVotes(data.votes)
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching vote status:', error)
+      }
+    }
+
+    fetchVoteStatus()
+  }, [slug])
 
   const handleVote = async (voteType: 'yes' | 'no') => {
     if (hasVoted || isVoting) return
 
     setIsVoting(true)
     try {
-      const response = await fetch(`/api/questions/${questionId}/vote`, {
+      const response = await fetch(`/api/questions/${slug}/vote`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -38,12 +59,14 @@ export default function VoteSection({
       })
 
       if (response.ok) {
-        setLocalVotes(prev => ({
-          ...prev,
-          [voteType]: prev[voteType] + 1
-        }))
-        setHasVoted(true)
-        localStorage.setItem(`vote_${questionId}`, voteType)
+        const data = await response.json()
+        if (data.success) {
+          setLocalVotes(data.votes)
+          setUserVote(voteType)
+          setHasVoted(true)
+        } else {
+          alert(data.error || 'Failed to vote')
+        }
       } else {
         const data = await response.json()
         alert(data.error || 'Failed to vote')
@@ -77,7 +100,7 @@ export default function VoteSection({
         <Button
           variant="outline"
           size="lg"
-          className="flex-1"
+          className={`flex-1 ${userVote === 'yes' ? 'bg-green-50 text-green-600' : ''}`}
           onClick={() => handleVote('yes')}
           disabled={hasVoted || isVoting}
         >
@@ -87,7 +110,7 @@ export default function VoteSection({
         <Button
           variant="outline"
           size="lg"
-          className="flex-1"
+          className={`flex-1 ${userVote === 'no' ? 'bg-red-50 text-red-600' : ''}`}
           onClick={() => handleVote('no')}
           disabled={hasVoted || isVoting}
         >

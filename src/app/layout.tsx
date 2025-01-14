@@ -4,6 +4,7 @@ import "./globals.css"
 import { Header } from "@/components/Header"
 import { Footer } from "@/components/Footer"
 import { Analytics } from "@vercel/analytics/react"
+import { Toaster } from '@/components/ui/toaster'
 
 const quicksand = Quicksand({ 
   subsets: ["latin"],
@@ -27,6 +28,7 @@ export default function RootLayout({
         {children}
         <Analytics />
         <Footer />
+        <Toaster />
       </body>
     </html>
   )

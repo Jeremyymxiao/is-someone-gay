@@ -29,3 +29,17 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 export default clientPromise;
+
+export async function getMongoDb() {
+  try {
+    console.log('Connecting to MongoDB...')
+    const client = await clientPromise
+    console.log('Connected to MongoDB')
+    const db = client.db('kana-learning-dev')
+    console.log('Got database instance')
+    return db
+  } catch (error) {
+    console.error('Failed to connect to MongoDB:', error)
+    throw error
+  }
+}

@@ -47,7 +47,7 @@ export default function ArticleList() {
           className="p-6 hover:shadow-md transition-shadow"
         >
           <Link
-            href={`/articles/${article._id}`}
+            href={`/articles/${article.slug}`}
             className="block"
           >
             <h2 className="text-xl font-semibold hover:text-blue-600 mb-4">

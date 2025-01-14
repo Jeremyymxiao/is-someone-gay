@@ -28,17 +28,23 @@ export default function QuestionList() {
         // 获取每个问题的用户投票状态
         const votes: {[key: string]: 'yes' | 'no' | null} = {}
         await Promise.all(
-          data.questions.map(async (question: SerializedQuestion) => {
-            try {
-              const voteResponse = await fetch(`/api/questions/${question._id}/vote`)
-              const voteData = await voteResponse.json()
-              if (voteData.success) {
-                votes[question._id] = voteData.userVote
+          data.questions
+            .filter((question: SerializedQuestion) => question.slug) // 只处理有 slug 的问题
+            .map(async (question: SerializedQuestion) => {
+              try {
+                const voteResponse = await fetch(`/api/questions/${question.slug}/vote`)
+                if (!voteResponse.ok) {
+                  console.warn(`Failed to fetch vote status for question ${question.slug}`)
+                  return
+                }
+                const voteData = await voteResponse.json()
+                if (voteData.success) {
+                  votes[question.slug] = voteData.userVote
+                }
+              } catch (error) {
+                console.error('Error fetching vote status:', error)
               }
-            } catch (error) {
-              console.error('Error fetching vote status:', error)
-            }
-          })
+            })
         )
         setUserVotes(votes)
       } catch (error) {
@@ -51,14 +57,15 @@ export default function QuestionList() {
     fetchQuestions()
   }, [])
 
-  const handleVote = async (questionId: string, vote: 'yes' | 'no') => {
+  const handleVote = async (slug: string, vote: 'yes' | 'no') => {
+    if (!slug) return // 如果没有 slug，直接返回
     // 防止重复投票
-    if (votingStates[questionId] || userVotes[questionId] !== null) return
+    if (votingStates[slug] || userVotes[slug] !== null) return
     
-    setVotingStates(prev => ({ ...prev, [questionId]: true }))
+    setVotingStates(prev => ({ ...prev, [slug]: true }))
     
     try {
-      const response = await fetch(`/api/questions/${questionId}/vote`, {
+      const response = await fetch(`/api/questions/${slug}/vote`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -72,7 +79,7 @@ export default function QuestionList() {
         // 更新本地状态
         setQuestions(prevQuestions =>
           prevQuestions.map(q =>
-            q._id === questionId
+            q.slug === slug
               ? {
                   ...q,
                   votes: data.votes
@@ -83,13 +90,13 @@ export default function QuestionList() {
         // 更新用户投票状态
         setUserVotes(prev => ({
           ...prev,
-          [questionId]: vote
+          [slug]: vote
         }))
       }
     } catch (error) {
       console.error('Error voting:', error)
     } finally {
-      setVotingStates(prev => ({ ...prev, [questionId]: false }))
+      setVotingStates(prev => ({ ...prev, [slug]: false }))
     }
   }
 
@@ -114,14 +121,14 @@ export default function QuestionList() {
                 variant="ghost"
                 size="sm"
                 className={`p-2 ${
-                  userVotes[question._id] === 'yes' 
+                  userVotes[question.slug] === 'yes' 
                     ? 'text-green-600 bg-green-50' 
                     : question.votes.yes > question.votes.no 
                       ? 'text-green-600' 
                       : ''
                 }`}
-                onClick={() => handleVote(question._id, 'yes')}
-                disabled={votingStates[question._id] || userVotes[question._id] !== null}
+                onClick={() => handleVote(question.slug, 'yes')}
+                disabled={votingStates[question.slug] || userVotes[question.slug] !== null}
               >
                 <ThumbsUp className="w-5 h-5" />
                 <span className="ml-1">{question.votes.yes}</span>
@@ -130,14 +137,14 @@ export default function QuestionList() {
                 variant="ghost"
                 size="sm"
                 className={`p-2 ${
-                  userVotes[question._id] === 'no' 
+                  userVotes[question.slug] === 'no' 
                     ? 'text-red-600 bg-red-50' 
                     : question.votes.no > question.votes.yes 
                       ? 'text-red-600' 
                       : ''
                 }`}
-                onClick={() => handleVote(question._id, 'no')}
-                disabled={votingStates[question._id] || userVotes[question._id] !== null}
+                onClick={() => handleVote(question.slug, 'no')}
+                disabled={votingStates[question.slug] || userVotes[question.slug] !== null}
               >
                 <ThumbsDown className="w-5 h-5" />
                 <span className="ml-1">{question.votes.no}</span>
@@ -145,7 +152,7 @@ export default function QuestionList() {
             </div>
             <div className="flex-1">
               <Link
-                href={`/questions/${question._id}`}
+                href={`/questions/${question.slug}`}
                 className="block"
               >
                 <h2 className="text-xl font-semibold hover:text-blue-600 mb-4">

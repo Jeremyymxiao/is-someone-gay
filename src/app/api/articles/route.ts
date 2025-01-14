@@ -22,6 +22,7 @@ export async function GET(request: Request) {
       views: article.views,
       likes: article.likes,
       likedIps: article.likedIps || [],
+      slug: article.slug,
       comments: article.comments?.map(comment => ({
         _id: comment._id.toString(),
         text: comment.text,
@@ -69,6 +70,7 @@ export async function POST(request: Request) {
       likes: 0,
       likedIps: [],
       comments: [],
+      slug: data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''),
       createdAt: new Date(),
       updatedAt: new Date()
     };

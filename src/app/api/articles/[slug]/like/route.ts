@@ -1,27 +1,18 @@
 import { NextResponse } from 'next/server'
-import { ObjectId } from 'mongodb'
 import clientPromise from '@/lib/mongodb'
 import type { Article } from '@/types/db'
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: { slug: string } }
 ) {
   try {
-    if (!params.id || !ObjectId.isValid(params.id)) {
-      return NextResponse.json(
-        { error: 'Invalid article ID' },
-        { status: 400 }
-      )
-    }
-
+    console.log('API: Handling like for article with slug:', params.slug)
     const ip = request.headers.get('x-forwarded-for') || 'unknown'
     const client = await clientPromise
-    const db = client.db("kana-learning-dev")
+    const db = client.db('kana-learning-dev')
     
-    const article = await db
-      .collection<Article>("articles")
-      .findOne({ _id: new ObjectId(params.id) })
+    const article = await db.collection<Article>('articles').findOne({ slug: params.slug })
 
     if (!article) {
       return NextResponse.json(
@@ -32,12 +23,12 @@ export async function POST(
 
     const hasLiked = article.likedIps.includes(ip)
     
-    const result = await db.collection<Article>("articles").updateOne(
-      { _id: new ObjectId(params.id) },
+    const result = await db.collection<Article>('articles').updateOne(
+      { slug: params.slug },
       hasLiked
         ? {
             $inc: { likes: -1 },
-            $pull: { likedIps: { $eq: ip } }
+            $pull: { likedIps: ip }
           }
         : {
             $inc: { likes: 1 },
@@ -52,20 +43,18 @@ export async function POST(
       )
     }
 
-    const updatedArticle = await db
-      .collection<Article>("articles")
-      .findOne({ _id: new ObjectId(params.id) })
+    const updatedArticle = await db.collection<Article>('articles').findOne({ slug: params.slug })
 
     return NextResponse.json({
       success: true,
       likes: updatedArticle?.likes || 0,
-      hasLiked: !hasLiked
+      liked: !hasLiked
     })
   } catch (error) {
-    console.error('Error:', error)
+    console.error('API Error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
     )
   }
-}
+} 

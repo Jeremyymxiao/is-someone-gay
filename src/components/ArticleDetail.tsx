@@ -23,7 +23,7 @@ export default function ArticleDetail({ article }: ArticleDetailProps) {
     setIsLoading(true)
 
     try {
-      const response = await fetch(`/api/articles/${article._id}/like`, {
+      const response = await fetch(`/api/articles/${article.slug}/like`, {
         method: 'POST',
       })
       const data = await response.json()
@@ -67,7 +67,7 @@ export default function ArticleDetail({ article }: ArticleDetailProps) {
           {likes} Likes
         </Button>
       </CardFooter>
-      <Comments articleId={article._id} initialComments={article.comments} />
+      <Comments articleSlug={article.slug} initialComments={article.comments} />
     </Card>
   )
 }

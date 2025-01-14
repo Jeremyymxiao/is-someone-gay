@@ -49,7 +49,7 @@ A website that allows users to create and vote on "isXXXgay" questions, share op
 
 ### Backend Stack
 - Next.js API routes
-- MongoDB for data storage
+- MongoDB for data storage (Database name: kana-learning-dev)
 - Basic rate limiting and IP tracking
 
 ### Infrastructure

@@ -3,6 +3,7 @@ import { ObjectId } from 'mongodb'
 // 基础问题类型（不包含_id）
 export type QuestionData = {
   title: string
+  slug: string
   description?: string
   type: 'preset' | 'user'
   votes: {
@@ -33,6 +34,7 @@ export type Question = QuestionData & {
 // 基础文章类型（不包含_id）
 export type ArticleData = {
   title: string
+  slug: string
   content: string
   type: string
   views: number
@@ -69,6 +71,7 @@ export type SerializedComment = {
 export type SerializedArticle = {
   _id: string
   title: string
+  slug: string
   content: string
   type: string
   views: number
@@ -84,6 +87,7 @@ export type SerializedQuestion = {
   _id: string
   id: string // 为了向后兼容
   title: string
+  slug: string
   description?: string
   type: 'preset' | 'user'
   votes: {
@@ -101,6 +105,7 @@ export type SerializedQuestion = {
     _id: string
     id: string
     title: string
+    slug: string
     votes: {
       yes: number
       no: number

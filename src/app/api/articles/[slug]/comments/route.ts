@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { ObjectId, UpdateFilter } from 'mongodb'
+import { ObjectId } from 'mongodb'
 import clientPromise from '@/lib/mongodb'
 import type { SerializedComment, Article } from '@/types/db'
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { slug: string } }
 ) {
   try {
+    console.log('API: Adding comment to article with slug:', params.slug)
     const { text, nickname } = await request.json()
 
     // 验证输入
@@ -19,21 +20,14 @@ export async function POST(
     }
 
     const client = await clientPromise
-    const db = client.db("kana-learning-dev")
+    const db = client.db('kana-learning-dev')
 
-    let articleId: ObjectId | null = null
-
-    if (ObjectId.isValid(params.id)) {
-      articleId = new ObjectId(params.id)
-    } else {
-      const article = await db.collection<Article>("articles").findOne({ slug: params.id })
-      if (!article) {
-        return NextResponse.json(
-          { error: 'Article not found' },
-          { status: 404 }
-        )
-      }
-      articleId = article._id
+    const article = await db.collection<Article>('articles').findOne({ slug: params.slug })
+    if (!article) {
+      return NextResponse.json(
+        { error: 'Article not found' },
+        { status: 404 }
+      )
     }
 
     const now = new Date()
@@ -46,18 +40,12 @@ export async function POST(
       likedIps: []
     }
 
-    const update: UpdateFilter<Article> = {
-      $push: {
-        comments: newComment
-      },
-      $set: {
-        updatedAt: now
+    const result = await db.collection<Article>('articles').updateOne(
+      { slug: params.slug },
+      {
+        $push: { comments: newComment },
+        $set: { updatedAt: now }
       }
-    }
-
-    const result = await db.collection<Article>("articles").updateOne(
-      { _id: articleId },
-      update
     )
 
     if (result.matchedCount === 0) {
@@ -81,7 +69,7 @@ export async function POST(
       comment: serializedComment
     })
   } catch (error) {
-    console.error('Failed to add comment:', error)
+    console.error('API Error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -91,29 +79,15 @@ export async function POST(
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { slug: string } }
 ) {
   try {
+    console.log('API: Getting comments for article with slug:', params.slug)
     const client = await clientPromise
-    const db = client.db("kana-learning-dev")
+    const db = client.db('kana-learning-dev')
 
-    let articleId: ObjectId | null = null
-
-    if (ObjectId.isValid(params.id)) {
-      articleId = new ObjectId(params.id)
-    } else {
-      const article = await db.collection<Article>("articles").findOne({ slug: params.id })
-      if (!article) {
-        return NextResponse.json(
-          { error: 'Article not found' },
-          { status: 404 }
-        )
-      }
-      articleId = article._id
-    }
-
-    const article = await db.collection<Article>("articles").findOne(
-      { _id: articleId },
+    const article = await db.collection<Article>('articles').findOne(
+      { slug: params.slug },
       { projection: { comments: 1 } }
     )
 
@@ -133,12 +107,15 @@ export async function GET(
       likedIps: comment.likedIps
     })) || []
 
-    return NextResponse.json({ comments: serializedComments })
+    return NextResponse.json({
+      success: true,
+      comments: serializedComments
+    })
   } catch (error) {
-    console.error('Failed to fetch comments:', error)
+    console.error('API Error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
     )
   }
-}
+} 
